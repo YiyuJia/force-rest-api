@@ -12,6 +12,8 @@ public class ApiConfig {
 	String clientId;
 	String clientSecret;
 	String redirectURI;
+	String httpProxyHost;
+	int httpProxyPort;
 
 	public ApiConfig clone() {
 		return new ApiConfig()
@@ -110,6 +112,25 @@ public class ApiConfig {
 		return apiVersion;
 	}
 
+	/**
+	 * I should check url format etc. or, i should add a Proxy object here. 
+	 * but, let me do it later. 
+	 */
+	public String getHttpProxyHost() {
+		return httpProxyHost;
+	}
+
+	public void setHttpProxyHost(String httpProxyHost) {
+		this.httpProxyHost = httpProxyHost;
+	}
+
+	public Integer getHttpProxyPort() {
+		return httpProxyPort;
+	}
+
+	public void setHttpProxyPort(int httpProxyPort) {
+		this.httpProxyPort = httpProxyPort;
+	}
 
 	
 }

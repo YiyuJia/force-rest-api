@@ -3,6 +3,7 @@ package com.force.api;
 import com.force.api.http.Http;
 import com.force.api.http.HttpRequest;
 import com.force.api.http.HttpResponse;
+
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
@@ -63,8 +64,12 @@ public class ForceApi {
 
 	public ForceApi(ApiConfig apiConfig) {
 		config = apiConfig;
+		// check if proxy is needed.
+		if (config.httpProxyHost != null) {
+			Http.setProxy(config.httpProxyHost, config.httpProxyPort);			
+		}
 		session = Auth.authenticate(apiConfig);
-		autoRenew  = true;
+		autoRenew = true;
 
 	}
 
@@ -309,7 +314,9 @@ public class ForceApi {
 	
 	private final HttpResponse apiRequest(HttpRequest req) {
 		req.setAuthorization("OAuth "+session.getAccessToken());
-		HttpResponse res = Http.send(req);
+		
+		HttpResponse res = Http.send(req);		
+				
 		if(res.getResponseCode()==401) {
 			// Perform one attempt to auto renew session if possible
 			if(autoRenew) {

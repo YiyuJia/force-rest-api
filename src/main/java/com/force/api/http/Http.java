@@ -6,11 +6,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URL;
 
 
 public class Http {
+	
+	static Proxy proxy;
+	
+	//I should check host and port format. 
+	public static final void setProxy(String host, int port){
+		Http.proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));		
+	}
 	
 	static final byte[] readResponse(InputStream stream) throws IOException {
 		BufferedInputStream bin = new BufferedInputStream(stream);
@@ -23,9 +32,18 @@ public class Http {
 		return bout.toByteArray();
 	}
 	
+		
 	public static final HttpResponse send(HttpRequest req) {
+		
 		try {
-			HttpURLConnection conn = (HttpURLConnection) new URL(req.getUrl()).openConnection();
+			
+			HttpURLConnection conn;
+			if(proxy != null){
+				conn = (HttpURLConnection) new URL(req.getUrl()).openConnection(proxy);				
+			}
+			else{
+				conn = (HttpURLConnection) new URL(req.getUrl()).openConnection();				
+			}
 			conn.setInstanceFollowRedirects(true);
 			conn.setRequestMethod(req.getMethod());
 			for (HttpRequest.Header h : req.getHeaders()) {
@@ -72,9 +90,8 @@ public class Http {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
-		}
-
+		}		
+		
 	}
-
-
+	
 }
